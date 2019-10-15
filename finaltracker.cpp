@@ -191,6 +191,7 @@ void *connection_handler(void *cli)
                     
                    { 
                         send(sock,i->first,sizeof(i->first),0);
+                        cout<<" grp name "<<i->first<<endl;
                         recv(sock,&x,sizeof(x),0);
                         cout<<endl;
                         send(sock,i->second,sizeof(i->second),0);
@@ -265,6 +266,7 @@ void *connection_handler(void *cli)
                 send(sock,"ok",sizeof("ok"),0);
                 valread3 =recv(sock,buffer3,512,0);
                 cout<<endl;//filename
+                cout<<"filename "<<buffer3<<endl;
                 send(sock,"ok",sizeof("ok"),0);
                 int fl_sz;
                 valread4=recv(sock,&fl_sz,sizeof(fl_sz),0);//filesize
@@ -272,7 +274,7 @@ void *connection_handler(void *cli)
                 cout<<endl;
                 send(sock,"ok",sizeof("ok"),0);
                 int size;
-                recv(sock,&size,sizeof(size),0);
+                recv(sock,&size,sizeof(size),0);//no of hash
                 cout<<"size "<<size<<endl;
                 send(sock,"ok",sizeof("ok"),0);
                 //int lb = atoi(buffer112);
@@ -286,7 +288,7 @@ void *connection_handler(void *cli)
                     send(sock,"ok",sizeof("ok"),0);
                 }
                 recv(sock,buffer6,512,0);
-                uff.filesize=atoi(buffer4);
+                uff.filesize=fl_sz;
                 uff.user_idss.push_back(user_id);
                 uff.filepath=buffer1;
                 uff.filename=buffer3;
@@ -297,9 +299,10 @@ void *connection_handler(void *cli)
                 string key = gid+flname;
                 upload_files.insert(make_pair(key,uff));
                 it_up = upload_files.begin();
-                cout<<"key "<<it_up->first<<endl;
-                uploadfile uf = it_up->second;
-                cout<<" file size  "<<uf.filesize<<endl;
+                cout<<" key "<<it_up->first<<endl;//print krwa k dekha
+                uploadfile uf = it_up->second;//printing purpose
+                cout<<" file size  "<<uf.filesize<<endl;//printing purpose
+                it = group_n_all.find(buffer2);
            } 
     
         }

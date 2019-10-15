@@ -292,6 +292,7 @@ while(1)
           send(client_sockfd,"ok",sizeof("ok"),0);
           int size;
           recv(client_sockfd,&size,sizeof(size),0);
+          send(client_sockfd,"ok",sizeof("ok"),0);
           for(int i=0;i<size;i++)
           {
             int x=0;
