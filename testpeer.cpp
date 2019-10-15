@@ -50,7 +50,7 @@ char** split_by_slash(char s[])
 }
 
 char** splits(char s[])
-{
+{ cout<<"inside input splits"<<endl;
   char** ctr1 = new char*[20];
 
   char* temp=strtok(s, " ");
@@ -108,7 +108,7 @@ void *myclient(void* arg)
 
 	struct sockaddr_in serv_addr;
 	serv_addr.sin_family = AF_INET;
-	serv_addr.sin_port = htons( 8096 );
+	serv_addr.sin_port = htons( 8800);
   serv_addr.sin_addr.s_addr=inet_addr("127.0.0.1");
 
 if(connect ( client_sockfd  , (struct sockaddr*)&serv_addr  , sizeof(serv_addr) )<0)
@@ -141,47 +141,52 @@ while(1)
       ct.uid = input_split[2];
       int n;
       int flag=0;
-      uid=input_split[1];
-      // cout<<"input split 0 "<<input_split[0]<<endl;
-      // cout<<"input split 1 "<<input_split[1]<<endl;
-      // cout<<"input split 2 "<<input_split[2]<<endl;
+      //uid=input_split[1];
+      cout<<"input split 0 "<<input_split[0]<<endl;
+      cout<<"input split 1 "<<input_split[1]<<endl;
+      cout<<"input split 2 "<<input_split[2]<<endl;
       // cout<<"---"<<string(input_split[0]).size();
       
      n= send(client_sockfd,input_split[0],sizeof(string(input_split[0])),0);
-      //cout<<"n "<<n<<endl;
+      cout<<"n 1 "<<n<<endl;
       recv(client_sockfd,x,512,0);
+      cout<<endl;
       memset(x,'\0',512);
     n= send(client_sockfd,input_split[1],sizeof(string(input_split[1])),0);
        recv(client_sockfd,x,512,0);
+       cout<<endl;
+       cout<<"n 2 "<<n<<endl;
        memset(x,'\0',512);
      n= send(client_sockfd,input_split[2],sizeof(string(input_split[2])),0);
-       recv(client_sockfd,x,512,0);
+       //recv(client_sockfd,x,512,0);
+       cout<<endl;
+       cout<<"n 3 "<<n<<endl;
        memset(x,'\0',512);
     }
     if(strcmp(input_split[0],"login")==0)
     {
-      struct login
-      {
-        string uid;
-        string passwd;  
-      };
+     
        //int x1;
-      
-      char* buffer2 = new char[512];
-      login ct;
-      ct.uid = input_split[1];
-      ct.uid = input_split[2];
+      int n;
       int valread2;
       uid = input_split[1];
-      send(client_sockfd,&input_split[0],sizeof((input_split[0])),0);
+      n= send(client_sockfd,input_split[0],sizeof(string(input_split[0])),0);
+      cout<<"n 1 "<<n<<endl;
       recv(client_sockfd,x,512,0);
+      cout<<endl;
+
       memset(x,'\0',512);
-      send(client_sockfd,&input_split[1],sizeof((input_split[1])),0);
+      send(client_sockfd,input_split[1],sizeof(string(input_split[1])),0);
+      cout<<"n 2 "<<n<<endl;
       recv(client_sockfd,x,512,0);
+      cout<<endl;
       memset(x,'\0',512);
-      send(client_sockfd,&input_split[2],sizeof((input_split[2])),0);
-      recv(client_sockfd,x,512,0);
-      memset(x,'\0',512);
+      send(client_sockfd,input_split[2],sizeof(string(input_split[2])),0);
+      cout<<"n 3 "<<n<<endl;
+      //read(client_sockfd,x,512);
+      cout<<endl;
+      //cout<<"x"<<
+      //memset(x,'\0',512);
       if(strcmp(x,"not a registered user")==0)
       {
         exit(EXIT_FAILURE);
@@ -192,25 +197,25 @@ while(1)
       }
 
     }
-    if(flag ==1)
-    {
+   // if(flag ==1)
+    //{
       if(strcmp(input_split[0],"create_group")==0)
         { 
-          send(client_sockfd,&input_split[0],sizeof((input_split[0])),0);
+          send(client_sockfd,input_split[0],sizeof(string(input_split[0])),0);
           recv(client_sockfd,x,512,0);
           memset(x,'\0',512);
-          send(client_sockfd,&input_split[1],sizeof((input_split[1])),0);
+          send(client_sockfd,input_split[1],sizeof(string(input_split[1])),0);
           recv(client_sockfd,x,512,0);
           memset(x,'\0',512);
-          send(client_sockfd,uid,sizeof(uid),0);
+          send(client_sockfd,"ok",sizeof("ok"),0);
         }
         if(strcmp(input_split[0],"join_group")==0)
         {
          
-          send(client_sockfd,&input_split[0],sizeof((input_split[0])),0);
+          send(client_sockfd,input_split[0],sizeof(string(input_split[0])),0);
           recv(client_sockfd,x,512,0);
           memset(x,'\0',512);
-          send(client_sockfd,&input_split[1],sizeof((input_split[1])),0);
+          send(client_sockfd,input_split[1],sizeof(string(input_split[1])),0);
           recv(client_sockfd,x,512,0);
           memset(x,'\0',512);
           send(client_sockfd,"ok",sizeof("ok"),0);
@@ -225,10 +230,10 @@ while(1)
         }
         if(strcmp(input_split[0],"leave_group")==0)
         {
-          send(client_sockfd,&input_split[0],sizeof((input_split[0])),0);
+          send(client_sockfd,input_split[0],sizeof(string(input_split[0])),0);
            recv(client_sockfd,x,512,0);
            memset(x,'\0',512);
-          send(client_sockfd,&input_split[1],sizeof((input_split[1])),0);
+          send(client_sockfd,input_split[1],sizeof(string(input_split[1])),0);
            recv(client_sockfd,x,512,0);
            memset(x,'\0',512);
            send(client_sockfd,"ok",sizeof("ok"),0);
@@ -239,10 +244,10 @@ while(1)
         }
         if(strcmp(input_split[0],"list_request")==0)
         {
-          send(client_sockfd,&input_split[0],sizeof((input_split[0])),0);
+          send(client_sockfd,input_split[0],sizeof(string(input_split[0])),0);
           recv(client_sockfd,x,512,0);
           memset(x,'\0',512);
-          send(client_sockfd,&input_split[1],sizeof((input_split[1])),0);
+          send(client_sockfd,input_split[1],sizeof(string(input_split[1])),0);
           recv(client_sockfd,x,512,0);
           memset(x,'\0',512);
           send(client_sockfd,"ok",sizeof("ok"),0);
@@ -255,10 +260,10 @@ while(1)
         }
         if(strcmp(input_split[0],"accept_request")==0)
         {
-          send(client_sockfd,&input_split[0],sizeof((input_split[0])),0);
+          send(client_sockfd,input_split[0],sizeof(string(input_split[0])),0);
           recv(client_sockfd,x,512,0);
           memset(x,'\0',512);
-          send(client_sockfd,&input_split[1],sizeof((input_split[1])),0);
+          send(client_sockfd,input_split[1],sizeof(string(input_split[1])),0);
           recv(client_sockfd,x,512,0);
           memset(x,'\0',512);
           send(client_sockfd,"ok",sizeof("ok"),0);
@@ -268,10 +273,10 @@ while(1)
         }
         if(strcmp(input_split[0],"list_group")==0)
         {
-          send(client_sockfd,&input_split[0],sizeof((input_split[0])),0);
+          send(client_sockfd,input_split[0],sizeof(string(input_split[0])),0);
           recv(client_sockfd,x,512,0);
           memset(x,'\0',512);
-          send(client_sockfd,&input_split[1],sizeof((input_split[1])),0);
+          send(client_sockfd,input_split[1],sizeof(string(input_split[1])),0);
           recv(client_sockfd,x,512,0);
           cout<<x<<endl;
           memset(x,'\0',512);
@@ -282,10 +287,10 @@ while(1)
         }
         if(strcmp(input_split[0],"list_files")==0)
         {
-          send(client_sockfd,&input_split[0],sizeof((input_split[0])),0);
+          send(client_sockfd,input_split[0],sizeof(string(input_split[0])),0);
           recv(client_sockfd,x,512,0);
           memset(x,'\0',512);
-          send(client_sockfd,&input_split[1],sizeof((input_split[1])),0);
+          send(client_sockfd,input_split[1],sizeof(string(input_split[1])),0);
           recv(client_sockfd,x,512,0);
           memset(x,'\0',512);
           send(client_sockfd,"ok",sizeof("ok"),0);
@@ -293,7 +298,7 @@ while(1)
           cout<<x<<endl;
           memset(x,'\0',512);
         }
-        if(strcmp(input_split[0],"upload_file")==0)
+        if(strcmp(input_split[0],"upload")==0)
         {
           struct upload_file
           {
@@ -368,30 +373,34 @@ while(1)
     fclose(fp);
           //##################################################################
           //split_by_slash(input_split[1]);
-          send(client_sockfd,&input_split[0],sizeof((input_split[0])),0); //upload
+          send(client_sockfd,input_split[0],sizeof(string(input_split[0])),0); //upload
           recv(client_sockfd,x,512,0);
           memset(x,'\0',512);
-          send(client_sockfd,&input_split[1],sizeof((input_split[1])),0); //filepath
+          send(client_sockfd,input_split[1],sizeof(string(input_split[1])),0); //filepath
           recv(client_sockfd,x,512,0);
           memset(x,'\0',512);
-          send(client_sockfd,&input_split[2],sizeof((input_split[2])),0); //groupid
+          send(client_sockfd,input_split[2],sizeof(string(input_split[2])),0); //groupid
           recv(client_sockfd,x,512,0);
           memset(x,'\0',512);
-          send(client_sockfd,&file_split[last_val],sizeof((file_split[last_val])),0); //filename
+          send(client_sockfd,file_split[last_val],sizeof(string(file_split[last_val])),0); //filename
           recv(client_sockfd,x,512,0);
           memset(x,'\0',512);
           send(client_sockfd,&size,sizeof((size)),0); //filesize
           recv(client_sockfd,x,512,0);
           memset(x,'\0',512);
+          int nn = hash.size();
+          send(client_sockfd,&nn,sizeof((nn)),0);
+          recv(client_sockfd,x,512,0);
          // send(client_sockfd,hash,sizeof((hash)),0); //hash
           for(int j=0;j<hash.size();j++)
           {
-            send(client_sockfd,&hash[j],sizeof(hash[j]),0);//hash send krra
+            send(client_sockfd,&hash[j],sizeof(string(hash[j])),0);//hash send krra
             recv(client_sockfd,&x,sizeof(x),0);
             memset(x,'\0',512);
           }
           send(client_sockfd,&something1,sizeof(something1),0);
         }
+
         if(strcmp(input_split[0],"download_files")==0)
         {
           struct download
@@ -406,21 +415,21 @@ while(1)
           dwld.filename = input_split[2];
           dwld.destpath=input_split[3];
     
-          send(client_sockfd,&input_split[0],sizeof((input_split[0])),0);
+          send(client_sockfd,input_split[0],sizeof((input_split[0])),0);
           recv(client_sockfd,x,512,0);
           memset(x,'\0',512);
-          send(client_sockfd,&input_split[1],sizeof((input_split[1])),0);
+          send(client_sockfd,input_split[1],sizeof((input_split[1])),0);
           recv(client_sockfd,x,512,0);
           memset(x,'\0',512);
-          send(client_sockfd,&input_split[2],sizeof((input_split[2])),0);
+          send(client_sockfd,input_split[2],sizeof((input_split[2])),0);
           recv(client_sockfd,x,512,0);
           memset(x,'\0',512);
-          send(client_sockfd,&input_split[3],sizeof((input_split[3])),0);
+          send(client_sockfd,input_split[3],sizeof((input_split[3])),0);
         }
     
         if(strcmp(input_split[0],"logout")==0)
         {
-         send(client_sockfd,&input_split[0],sizeof((input_split[0])),0);
+         send(client_sockfd,input_split[0],sizeof((input_split[0])),0);
          recv(client_sockfd,x,512,0);
          memset(x,'\0',512);
          send(client_sockfd,"ok",sizeof("ok"),0);
@@ -443,7 +452,7 @@ while(1)
     
         }
       }
-  }
+  
 
 
  //  FILE *fp = fopen ( "/home/nausheen/heart.jpg" , "rb" );
