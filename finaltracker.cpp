@@ -112,16 +112,12 @@ void *connection_handler(void *cli)
         }
         if(strcmp(buffer,"login")==0)
         {
-            const char* msg = "sorry,not a registered user";
+            //const char* msg = "sorry,not a registered user";
             //for (auto i = create_user.begin(); i != create_user.end(); i++) 
              //cout << i->first << "  " << i->second<< endl;
-            if(user_details.find(buffer1)==user_details.end())
+            if(user_details.find(buffer1)!=user_details.end())
             {
-                send(sock,msg,sizeof(msg),0);
-            }
-            else 
-            {
-                flag =1;
+                 flag =1;
                 user_id=buffer1;
                 ipv4_of_uid = if2->ip4;
                 port_of_uid = if2->port_;
@@ -159,6 +155,7 @@ void *connection_handler(void *cli)
             if(strcmp(buffer,"join_group")==0)
             {
                 it = group_n_all.find(buffer1);
+                //cout<<"it "<<*it<<endl;
                 if(it != group_n_all.end())
                 {
                     group_info gin;
@@ -182,17 +179,14 @@ void *connection_handler(void *cli)
                         //client request accept karke group info update karne aayega.
                     }
                 }
-                else
-                { 
-                   const char* msg1 =new char[512];
-                    msg1= "no such group exists";
-                    send(sock,msg1,sizeof(msg1),0);
-
-                }
+                
             }
     
             if(strcmp(buffer,"list_groups")==0)
-            {
+            {   int size=listgroup.size();
+                char* a = new char[512];
+                send(sock,&size,sizeof(size),0);
+                recv(sock,a,512,0);
                 for (auto i = listgroup.begin(); i != listgroup.end(); i++) 
                     
                    { 
@@ -208,15 +202,20 @@ void *connection_handler(void *cli)
                 it = group_n_all.find(buffer1);
                 if(it != group_n_all.end())
                 {
+                    char* ab = new char[512];
                     group_info gii;
                     gii = it->second;
                     vector<char*>v;
                     v= gii.files;
+                    int size = v.size();
+                    send(sock,&size,sizeof(size),0);
+                    recv(sock,ab,512,0);
                     for(auto i =v.begin(); i != v.end();i++)
                     {
                         char* filen=new char[1024];
                         filen = *i;
                         send(sock,filen,sizeof(filen),0);
+                        recv(sock,ab,512,0);
     
                     }
     
@@ -225,13 +224,17 @@ void *connection_handler(void *cli)
     
             if(strcmp(buffer,"list_requests")==0)
             {    
+                int a;
                 char* abcd = new char[512];
+                char* abcd1 = new char[512];
+                int list_size = list_requests.size();
+                send(sock,&list_size,sizeof(list_size),0);
+                recv(sock,abcd1,512,0);
                 for(auto i = list_requests.begin();i != list_requests.end();i++ )
                 {
-                   
                     abcd = *i;
                     send(sock,abcd,sizeof(abcd),0);
-                    recv(sock,&x,sizeof(x),0);
+                    recv(sock,abcd1,512,0);
                     cout<<endl;
                 }
             }
@@ -246,12 +249,6 @@ void *connection_handler(void *cli)
                     gin.uids.push_back(buffer2);
                     // list_requests se pop bhi karwao
                     
-                }
-                else
-                { 
-                   const char* msg1 =new char[512];
-                    msg1= "no such group exists";
-                    send(sock,msg1,sizeof(msg1),0);
                 }
             }
     
@@ -269,24 +266,26 @@ void *connection_handler(void *cli)
                 valread3 =recv(sock,buffer3,512,0);
                 cout<<endl;//filename
                 send(sock,"ok",sizeof("ok"),0);
-                valread4=recv(sock,buffer4,512,0);//filesize
-                cout<<" file size"<<buffer4<<endl;
+                int fl_sz;
+                valread4=recv(sock,&fl_sz,sizeof(fl_sz),0);//filesize
+                cout<<" file size"<<fl_sz<<endl;
                 cout<<endl;
                 send(sock,"ok",sizeof("ok"),0);
                 int size;
                 recv(sock,&size,sizeof(size),0);
+                cout<<"size "<<size<<endl;
                 send(sock,"ok",sizeof("ok"),0);
                 //int lb = atoi(buffer112);
                 for(int i=0;i<size;i++)
                 {
-                                valread5=recv(sock,buffer5,512,0);//hash
-                                uff.sha.push_back(buffer5);
-                                memset(buffer5,'\0',512);
-                                cout<<endl;
-                                cout<<" shas "<<buffer5<<endl;
-                                send(sock,"ok",sizeof("ok"),0);
+                    valread5=recv(sock,buffer5,512,0);//hash
+                    uff.sha.push_back(buffer5);
+                    memset(buffer5,'\0',512);
+                    cout<<endl;
+                    cout<<" shas "<<buffer5<<endl;
+                    send(sock,"ok",sizeof("ok"),0);
                 }
-                                recv(sock,buffer6,512,0);
+                recv(sock,buffer6,512,0);
                 uff.filesize=atoi(buffer4);
                 uff.user_idss.push_back(user_id);
                 uff.filepath=buffer1;
@@ -300,7 +299,7 @@ void *connection_handler(void *cli)
                 it_up = upload_files.begin();
                 cout<<"key "<<it_up->first<<endl;
                 uploadfile uf = it_up->second;
-                cout<<" bcjavg"<<uf.filesize<<endl;
+                cout<<" file size  "<<uf.filesize<<endl;
            } 
     
         }
@@ -329,7 +328,7 @@ int main()
     struct sockaddr_in sock_address;
     sock_address.sin_family = AF_INET; 
     sock_address.sin_addr.s_addr = inet_addr("127.0.0.1"); 
-    sock_address.sin_port = htons(8800);
+    sock_address.sin_port = htons(8802);
     int addrlen = sizeof(sock_address);
     cout<<"after structure definition"<<endl;
     if(bind(serv_sockfd,(struct sockaddr*)&sock_address,sizeof(sock_address))<0)

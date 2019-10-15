@@ -108,7 +108,7 @@ void *myclient(void* arg)
 
 	struct sockaddr_in serv_addr;
 	serv_addr.sin_family = AF_INET;
-	serv_addr.sin_port = htons( 8800);
+	serv_addr.sin_port = htons( 8802);
   serv_addr.sin_addr.s_addr=inet_addr("127.0.0.1");
 
 if(connect ( client_sockfd  , (struct sockaddr*)&serv_addr  , sizeof(serv_addr) )<0)
@@ -184,17 +184,12 @@ while(1)
       send(client_sockfd,input_split[2],sizeof(string(input_split[2])),0);
       cout<<"n 3 "<<n<<endl;
       //read(client_sockfd,x,512);
-      cout<<endl;
+      //cout<<endl;
       //cout<<"x"<<
       //memset(x,'\0',512);
-      if(strcmp(x,"not a registered user")==0)
-      {
-        exit(EXIT_FAILURE);
-      }
-      else 
-      {
+      
           flag =1;
-      }
+      
 
     }
    // if(flag ==1)
@@ -211,7 +206,7 @@ while(1)
         }
         if(strcmp(input_split[0],"join_group")==0)
         {
-         
+          int ip_of_client = x1;
           send(client_sockfd,input_split[0],sizeof(string(input_split[0])),0);
           recv(client_sockfd,x,512,0);
           memset(x,'\0',512);
@@ -220,11 +215,13 @@ while(1)
           memset(x,'\0',512);
           send(client_sockfd,"ok",sizeof("ok"),0);
           recv(client_sockfd,&x1,sizeof(x1),0);
-          int ip_of_client = x1;
+          cout<<"port"<<x1<<endl;
+         
           memset(x,'\0',512);
           send(client_sockfd,"ok",sizeof("ok"),0);
           memset(x,'\0',512);
           recv(client_sockfd,x,512,0);
+          cout<<"ip "<<x<<endl;
           char* port_of_client = x;
           memset(x,'\0',512);
         }
@@ -237,13 +234,14 @@ while(1)
            recv(client_sockfd,x,512,0);
            memset(x,'\0',512);
            send(client_sockfd,"ok",sizeof("ok"),0);
-          recv(client_sockfd,x,512,0);
+          //recv(client_sockfd,x,512,0);
           cout<<x<<endl;
           memset(x,'\0',512);
 
         }
         if(strcmp(input_split[0],"list_request")==0)
         {
+          int size;
           send(client_sockfd,input_split[0],sizeof(string(input_split[0])),0);
           recv(client_sockfd,x,512,0);
           memset(x,'\0',512);
@@ -251,8 +249,19 @@ while(1)
           recv(client_sockfd,x,512,0);
           memset(x,'\0',512);
           send(client_sockfd,"ok",sizeof("ok"),0);
-          recv(client_sockfd,x,512,0);
+          recv(client_sockfd,&size,sizeof(size),0);
           cout<<x<<endl;
+          send(client_sockfd,"ok",sizeof("ok"),0);
+          for(int i=0;i<size;i++)
+          {
+            char* abcd1 =new char[512];
+            memset(abcd1,'\0',512);
+            recv(client_sockfd,abcd1,512,0);
+            cout<<endl;
+            cout<<"list request "<<abcd1 <<endl;
+            send(client_sockfd,"ok",sizeof("ok"),0);
+
+          }
           memset(x,'\0',512);
          // send(client_sockfd,"ok",sizeof("ok"),0);
           
@@ -271,22 +280,39 @@ while(1)
           cout<<x<<endl;
           memset(x,'\0',512);
         }
-        if(strcmp(input_split[0],"list_group")==0)
+        if(strcmp(input_split[0],"list_groups")==0)
         {
           send(client_sockfd,input_split[0],sizeof(string(input_split[0])),0);
           recv(client_sockfd,x,512,0);
           memset(x,'\0',512);
-          send(client_sockfd,input_split[1],sizeof(string(input_split[1])),0);
+          send(client_sockfd,"ok",sizeof("ok"),0);
           recv(client_sockfd,x,512,0);
           cout<<x<<endl;
           memset(x,'\0',512);
           send(client_sockfd,"ok",sizeof("ok"),0);
-          recv(client_sockfd,x,512,0);
+          int size;
+          recv(client_sockfd,&size,sizeof(size),0);
+          for(int i=0;i<size;i++)
+          {
+            int x=0;
+            char* buff1 = new char[512];
+            char* buffer4 = new char[512];
+            memset(buff1,'\0',512);
+            memset(buffer4,'\0',512);
+            recv(client_sockfd,buff1,512,0);
+            cout<<endl;
+            cout<<"group id is "<<buff1<<endl;
+            send(client_sockfd,&x,sizeof(x),0);
+            recv(client_sockfd,buffer4,512,0);
+            cout<<endl;
+            cout<<"owner is "<<buffer4<<endl;
+          }
           cout<<x<<endl;
           memset(x,'\0',512);
         }
         if(strcmp(input_split[0],"list_files")==0)
         {
+          int sz=0;
           send(client_sockfd,input_split[0],sizeof(string(input_split[0])),0);
           recv(client_sockfd,x,512,0);
           memset(x,'\0',512);
@@ -294,8 +320,18 @@ while(1)
           recv(client_sockfd,x,512,0);
           memset(x,'\0',512);
           send(client_sockfd,"ok",sizeof("ok"),0);
-          recv(client_sockfd,x,512,0);
+          recv(client_sockfd,&sz,sizeof(sz),0);
+          send(client_sockfd,"ok",sizeof("ok"),0);
           cout<<x<<endl;
+          for(int i=0;i<sz;i++)
+          {
+            char* buffer4 = new char[512];
+            memset(buffer4,'\0',512);
+            recv(client_sockfd,buffer4,512,0);
+            cout<<endl;
+            cout<<"files"<<buffer4<<endl;
+            send(client_sockfd,"ok",sizeof("ok"),0);
+          }
           memset(x,'\0',512);
         }
         if(strcmp(input_split[0],"upload")==0)
@@ -320,7 +356,7 @@ while(1)
     }
      fseek ( fp , 0 ,SEEK_END);
     int size = ftell ( fp );
-    //cout<<"size "<<size<<endl;
+    cout<<"size "<<size<<endl;
     rewind ( fp );
      char buff[512*1024];
     int n;
@@ -394,7 +430,11 @@ while(1)
          // send(client_sockfd,hash,sizeof((hash)),0); //hash
           for(int j=0;j<hash.size();j++)
           {
-            send(client_sockfd,&hash[j],sizeof(string(hash[j])),0);//hash send krra
+            string s= hash[j];
+            char c[s.size() +1];
+            strcpy(c,s.c_str());
+            cout<<"owvo "<<c<<endl;
+            send(client_sockfd,c,sizeof(21),0);//hash send krra
             recv(client_sockfd,&x,sizeof(x),0);
             memset(x,'\0',512);
           }
